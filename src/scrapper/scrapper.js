@@ -1,7 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-
 const navegar = async function (url) {
     const retorno = await axios.get('http://www.guiadosquadrinhos.com/edicao-aleatoria');
     const pagina = cheerio.load(retorno.data);

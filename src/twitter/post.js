@@ -36,7 +36,7 @@ const baixaImagem = async function(url, nome) {
 const postaTuite = async function (json) {
     try {
         const descricao = montaDescricao(json);
-        console.log(json.imagem)
+        
         await baixaImagem(json.imagem, imagem);
         const uploadedMedia = await twitter.v1.uploadMedia(imagem);
 
