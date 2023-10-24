@@ -7,7 +7,7 @@ const imagem = 'imagem.png';
 const getDescricao = function (elemento, texto) {
     var descricao = '';
     if (elemento) {
-        descricao = `${texto}: ${elemento.substring(0, 100)}\n`;    
+        descricao = `${texto} ${elemento.substring(0, 100)}\n`;    
     }
     return descricao;
 }
@@ -15,12 +15,12 @@ const getDescricao = function (elemento, texto) {
 const montaDescricao = function (json) {
     var descricao = '';
     
-    descricao += getDescricao(json.titulo, '💬 Título') + '\n';
-    descricao += getDescricao(json.publicacao, 'Publicação');
-    descricao += getDescricao(json.editora, 'Editora');
-    descricao += getDescricao(json.licenciador, 'Licenciador');
-    descricao += getDescricao(json.paginas, 'Páginas');
-    descricao += getDescricao(json.preco, 'Preço');
+    descricao += getDescricao(json.titulo, '💬') + '\n';
+    descricao += getDescricao(json.publicacao, 'Publicação:');
+    descricao += getDescricao(json.editora, 'Editora:');
+    descricao += getDescricao(json.licenciador, 'Licenciador:');
+    descricao += getDescricao(json.paginas, 'Páginas:');
+    descricao += getDescricao(json.preco, 'Preço:');
 
     return descricao;
 }
