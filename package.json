@@ -1,0 +1,17 @@
+{
+  "name": "todo-dia-um-gibi",
+  "version": "1.0.0",
+  "description": "Bot para o twitter que posta todo dia um gibi do guia dos quadrinhos.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Emanuel Ozorio Dias",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.5.1",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.3.1",
+    "twitter-api-v2": "^1.15.2"
+  }
+}
