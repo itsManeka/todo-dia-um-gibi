@@ -1,8 +1,14 @@
+require("dotenv").config();
+
 const twitter = require('./client.js');
 const axios = require('axios');
 const fs = require('fs');
 
 const imagem = 'imagem.png';
+
+const delay = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
 
 const getDescricao = function (elemento, texto) {
     var descricao = '';
@@ -26,29 +32,53 @@ const montaDescricao = function (json) {
 }
 
 const baixaImagem = async function(url, nome) {
-    const response = await axios.get(url, { responseType: 'arraybuffer' });
+    var response = undefined;
 
-    fs.writeFile(nome, response.data, (err) => {
-      if (err) throw err;
-    });
+    try {
+        response = await axios.get(url, { responseType: 'arraybuffer' });
+
+        fs.writeFile(nome, response.data, (err) => {
+            if (err) throw err;
+        });
+    } catch (err) {
+        console.log(`erro ao baixar imagem.\nurl:${url}\nerro:${err.message}`);
+        //-- Continua tentando
+        await delay(5000);
+        response = await baixaImagem(url, nome);
+    }
+
+    return response;
 }
 
 const postaTuite = async function (json) {
+    var retorno;
+
     try {
         const descricao = montaDescricao(json);
         
-        await baixaImagem(json.imagem, imagem);
-        const uploadedMedia = await twitter.v1.uploadMedia(imagem);
+        const response = await baixaImagem(json.imagem, imagem);
+        if (response) {
+            console.log("descricao " + descricao);
+            console.log("imagem " + imagem);
+            const uploadedMedia = await twitter.v1.uploadMedia(imagem);
 
-        await twitter.v2.tweet({
-            text: descricao,
-            media: {
-                media_ids: [uploadedMedia]
-            },
-        });
+            await twitter.v2.tweet({
+                text: descricao,
+                media: {
+                    media_ids: [uploadedMedia]
+                },
+            });
+
+            return true;
+        }
     } catch (err) {
-        console.log(err);
+        console.log(`erro ao postar twite: ${err.message}`);
+        //-- Continua tentando
+        await delay(5000);
+        retorno = await postaTuite(json);
     }
+
+    return retorno;
 }
 
 module.exports = postaTuite;

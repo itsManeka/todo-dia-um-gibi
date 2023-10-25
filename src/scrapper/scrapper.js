@@ -1,10 +1,22 @@
+require("dotenv").config();
+
 const axios = require('axios');
 const cheerio = require('cheerio');
 
+const delay = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 const navegar = async function (url) {
-    const retorno = await axios.get('http://www.guiadosquadrinhos.com/edicao-aleatoria');
-    const pagina = cheerio.load(retorno.data);
-    return pagina;
+    try {
+        const retorno = await axios.get('http://www.guiadosquadrinhos.com/edicao-aleatoria');
+        const pagina = cheerio.load(retorno.data);
+        return pagina;
+    } catch (err) {
+        console.log(`erro ao navegar: ${err.message}`);
+    }
+
+    return undefined;
 }
 
 const selectElement = function (pagina, selector) {
@@ -21,7 +33,10 @@ const getElementById = function (pagina, json, campo, id) {
     const selector = `#${id}`;
     const element = selectElement(pagina, selector);
     if (element) {
-        json[campo] = element.text().trim();
+        var text = element.text();
+        if (text !== null && text !== undefined) {
+            json[campo] = text.trim();
+        }
     }
 }
 
@@ -29,7 +44,10 @@ const getAttributeById = function (pagina, json, campo, id, attr) {
     const selector = `#${id}`;
     const element = selectElement(pagina, selector);
     if (element) {
-        json[campo] = element.attr(attr).trim();
+        var text = element.attr(attr);
+        if (text !== null && text !== undefined) {
+            json[campo] = text.trim();
+        }
     }
 }
 
@@ -45,9 +63,11 @@ const lePagina = async function (url) {
         getElementById(pagina, json, 'paginas', 'paginas');
         getElementById(pagina, json, 'preco', 'preco');
         return json;
+    } else {
+        //-- Continua tentando
+        await delay(5000);
+        return await lePagina(url);
     }
-
-    return undefined;
 }
 
 module.exports = lePagina;
