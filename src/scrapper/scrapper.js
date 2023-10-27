@@ -9,7 +9,7 @@ const delay = (ms) => {
 
 const navegar = async function (url) {
     try {
-        const retorno = await axios.get('http://www.guiadosquadrinhos.com/edicao-aleatoria');
+        const retorno = await axios.get(url);
         const pagina = cheerio.load(retorno.data);
         return pagina;
     } catch (err) {
